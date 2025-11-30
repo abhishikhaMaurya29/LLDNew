@@ -1,0 +1,84 @@
+@startuml
+title Add Expense Flow - Splitwise LLD (Plain Java)
+
+actor Client
+
+participant "ExpenseController" as C
+participant "ExpenseService" as S
+participant "SplitStrategyFactory" as F
+participant "SplitStrategy" as ST
+participant "ExpenseRepository" as ER
+participant "BalanceService" as BS
+participant "GroupBalanceRepository" as GBR
+participant "UserToUserBalanceRepository" as UBR
+
+Client -> C: addExpense(AddExpenseRequest)
+C -> S: addExpense(request)
+
+activate S
+
+note over S
+1. Build ExpenseContext from request\n2. Choose split strategy\n3. Create Expense + Splits
+end note
+
+S -> F: getStrategy(request.splitType)
+activate F
+F --> S: SplitStrategy
+deactivate F
+
+S -> ST: calculateSplits(context)
+activate ST
+ST --> S: List<ExpenseSplit>
+deactivate ST
+
+S -> ER: save(expense)
+activate ER
+ER --> S: expenseId
+deactivate ER
+
+note over S
+4. Update balances for expense
+end note
+
+S -> BS: updateBalancesForExpense(expense)
+
+activate BS
+
+BS -> GBR: find(groupId, payerId)
+activate GBR
+GBR --> BS: GroupBalance(payer)
+deactivate GBR
+
+BS -> GBR: save(updated payer balance)
+activate GBR
+GBR --> BS: ok
+deactivate GBR
+
+BS -> GBR: find(groupId, participantId)
+activate GBR
+GBR --> BS: GroupBalance(participant)
+deactivate GBR
+
+BS -> GBR: save(updated participant balance)
+activate GBR
+GBR --> BS: ok
+deactivate GBR
+
+BS -> UBR: find(minUserId, maxUserId)
+activate UBR
+UBR --> BS: UserToUserBalance
+deactivate UBR
+
+BS -> UBR: save(updated user-to-user balance)
+activate UBR
+UBR --> BS: ok
+deactivate UBR
+
+deactivate BS
+
+S --> C: CreateExpenseResponse(expenseId)
+deactivate S
+
+Client <-- C: response
+
+@enduml
