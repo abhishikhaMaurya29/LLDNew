@@ -8,6 +8,7 @@ import java.util.List;
 
 public class BalanceController {
     private final BalanceQueryService queryService;
+
     public BalanceController(BalanceQueryService queryService) {
         this.queryService = queryService;
     }

@@ -152,3 +152,117 @@ They do NOT replace DB locks.
 In a real system I would also use row-level locking (SELECT FOR UPDATE) or optimistic locking at the DB layer.
 We need two locks — one for fromUser and one for toUser — because we modify two different balance rows atomically.
 Locking both ensures correctness and prevents lost updates.”
+
+# ⭐ ReentrantLock = PESSIMISTIC LOCKING
+
+* Not optimistic.
+* Not hybrid.
+* Not DB-level.
+* 100% pessimistic locking at application level.
+
+### ✅ What is Pessimistic Lock?
+
+A pessimistic lock assumes:
+
+_“A conflict WILL happen, so block other threads before doing any work.”_
+
+So the thread:
+
+`Takes a lock -> Blocks all other threads -> Performs the update -> Unlocks`
+
+This is exactly how ReentrantLock works.
+
+🧠 How your ReentrantLock behaves in your Splitwise design
+
+Example:
+
+ReentrantLock l = BalanceLockManager.getLock("GB-1-101");
+l.lock();
+// update balance row
+l.unlock();
+
+
+This means:
+
+* Only ONE thread can update that particular balance row at a time
+* All other threads trying to lock "GB-1-101" will STOP and WAIT
+* This is blocking, not retry-based
+
+Therefore: pessimistic.
+
+### 🆚 Optimistic vs Pessimistic Memory Locks
+
+#### ✔ Pessimistic
+
+* Acquires lock first
+* Blocks others
+* No conflicts because no parallel edits
+* Used when conflicts are likely
+* This is ReentrantLock
+
+#### ✔ Optimistic
+
+* Does NOT lock
+* Reads the data
+* Tries to update
+* Checks a version
+
+If version changed → retry again
+
+* Used when conflicts are rare
+* This is typically done via:
+* CAS (Compare-And-Set)
+* Atomic classes
+* @Version in JPA/Hibernate (DB optimistic locking)
+
+Example optimistic flow:
+
+read version = 5
+update balance...
+set version = 6 only if DB version == 5
+if fail → retry
+
+🔥 Which one do WE use in Splitwise LLD?
+👉 ReentrantLock = pessimistic locking at application level
+👉 In-memory repository = no built-in optimistic lock
+👉 Database is not used in this LLD, so versioning is absent
+
+Therefore:
+
+❌ No version fields
+❌ No CAS
+❌ No retries
+❌ No optimistic locking
+✔ YES pessimistic application-level locking
+
+🧑‍🏫 When the interviewer asks:
+
+“Is your locking optimistic or pessimistic?”
+
+Say:
+
+“I’m using application-level ReentrantLock, which is a pessimistic lock — it prevents concurrent modifications by blocking other threads until the current update finishes.
+It simulates row-level locking in a DB.
+If I were using a real DB, I would use optimistic locking with version fields or pessimistic DB locks using SELECT FOR UPDATE.”
+
+This is a PERFECT explanation.
+
+### 🎯 Bonus: When to use which in real systems?
+
+###### Use Optimistic Locking when:
+
+* Conflicts are RARE
+* High read throughput
+* E-commerce order inventory
+* Banking ledger with retries
+* High concurrency
+
+###### Use Pessimistic Locking when:
+
+* Conflicts are LIKELY
+* Operations must be SERIALIZED
+* Accounting like Splitwise (balances!)
+* Payment transactions
+* Updating shared counters
+
+Splitwise-like balance computations actually favor pessimistic approach because correctness > throughput.
