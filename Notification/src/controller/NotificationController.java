@@ -21,7 +21,7 @@ public class NotificationController {
                 .getNotificationValidator(req.channelType);
 
         notificationValidator.validate(req);
-        Notification n = new Notification("ab@gmail.com", ChannelType.EMAIL, tenantId);
+        Notification n = new Notification(req.recipient, ChannelType.EMAIL, tenantId);
         return service.create(n, templateCode);
     }
 

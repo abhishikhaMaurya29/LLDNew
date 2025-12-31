@@ -2,8 +2,6 @@ package service;
 
 import channel.sender.NotificationSender;
 import channel.sender.NotificationSenderFactory;
-import channel.validator.NotificationValidator;
-import channel.validator.NotificationValidatorFactory;
 import model.ChannelConfig;
 import model.Notification;
 import model.NotificationStatus;
@@ -22,8 +20,8 @@ public class NotificationService {
     private final RetryPolicy retryPolicy;
 
     public NotificationService(InMemoryNotificationRepository inMemoryNotificationRepository,
-                               NotificationSenderFactory notificationSenderFactory, RetryPolicy retryPolicy,
-                               NotificationValidatorFactory notificationValidatorFactory,
+                               NotificationSenderFactory notificationSenderFactory,
+                               RetryPolicy retryPolicy,
                                InMemoryChannelConfigRepository inMemoryChannelConfigRepository,
                                InMemoryTemplateRepository templateRepo) {
         this.inMemoryNotificationRepository = inMemoryNotificationRepository;
