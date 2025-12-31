@@ -6,15 +6,16 @@ import java.util.List;
 
 public class Expense {
     private Long id;
-    private String description;
-    private BigDecimal amount;
-    private User paidBy;
-    private Group group;
-    private List<ExpenseSplit> splits;
-    private SplitType splitType;
-    private LocalDateTime createdBy;
+    private final String description;
+    private final BigDecimal amount;
+    private final User paidBy;
+    private final Group group;
+    private final List<ExpenseSplit> splits;
+    private final SplitType splitType;
+    private final LocalDateTime createdBy;
 
-    public Expense(Long id, String description, BigDecimal amount, User paidBy, Group group, List<ExpenseSplit> splits, SplitType splitType, LocalDateTime createdBy) {
+    public Expense(Long id, String description, BigDecimal amount, User paidBy, Group group, List<ExpenseSplit> splits,
+                   SplitType splitType, LocalDateTime createdBy) {
         this.id = id;
         this.description = description;
         this.amount = amount;

@@ -3,25 +3,25 @@ package model;
 import java.math.BigDecimal;
 
 public class UserToUserBalance {
-    private Long user1;
-    private Long user2;
+    private Long userId1;
+    private Long userId2;
     private BigDecimal amount;
 
     public UserToUserBalance() {
     }
 
-    public UserToUserBalance(Long user1, Long user2, BigDecimal delta) {
-        this.user1 = user1;
-        this.user2 = user2;
+    public UserToUserBalance(Long userId1, Long userId2, BigDecimal delta) {
+        this.userId1 = userId1;
+        this.userId2 = userId2;
         this.amount = delta;
     }
 
-    public Long getUser1() {
-        return user1;
+    public Long getUserId1() {
+        return userId1;
     }
 
-    public Long getUser2() {
-        return user2;
+    public Long getUserId2() {
+        return userId2;
     }
 
     public void add(BigDecimal delta) {

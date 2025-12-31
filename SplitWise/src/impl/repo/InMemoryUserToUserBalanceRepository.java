@@ -20,7 +20,7 @@ public class InMemoryUserToUserBalanceRepository implements UserToUserBalanceRep
 
     @Override
     public void save(UserToUserBalance userToUserBalance) {
-        map.put(getKey(userToUserBalance.getUser1(), userToUserBalance.getUser2()), userToUserBalance);
+        map.put(getKey(userToUserBalance.getUserId1(), userToUserBalance.getUserId2()), userToUserBalance);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class InMemoryUserToUserBalanceRepository implements UserToUserBalanceRep
         List<UserToUserBalance> list = new ArrayList<>();
 
         for (UserToUserBalance b : map.values()) {
-            if (b.getUser1().equals(userId) || b.getUser2().equals(userId)) {
+            if (b.getUserId1().equals(userId) || b.getUserId2().equals(userId)) {
                 list.add(b);
             }
         }

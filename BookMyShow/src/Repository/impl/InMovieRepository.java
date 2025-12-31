@@ -5,7 +5,7 @@ import Model.Movie;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MovieRepository {
+public class InMovieRepository {
     private final Map<Long, Movie> movies = new ConcurrentHashMap<>();
 
     public void save(Movie movie) {

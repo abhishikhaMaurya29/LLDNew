@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CinemaRepository {
+public class InCinemaRepository {
     private final Map<Long, Cinema> cinemas = new ConcurrentHashMap<>();
 
     public void save(Cinema cinema) {

@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 
 public class Settlement {
     private Long id;
-    private User fromUser;
-    private User toUser;
-    private Group group;
-    private String referenceId;
-    private BigDecimal amount;
+    private final User fromUser;
+    private final User toUser;
+    private final Group group;
+    private final String referenceId;
+    private final BigDecimal amount;
 
     public Settlement(Long id, User fromUser, User toUser, Group group, String referenceId, BigDecimal amount) {
         this.id = id;

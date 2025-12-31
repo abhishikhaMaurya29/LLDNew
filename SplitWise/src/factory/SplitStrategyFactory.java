@@ -12,7 +12,6 @@ public class SplitStrategyFactory {
             case EQUAL -> new EqualSplitStrategy();
             case EXACT -> new ExactSplitStrategy();
             case PERCENTAGE -> new PercentageSplitStrategy();
-            default -> throw new IllegalArgumentException(splitType + "is not supported");
         };
     }
 }

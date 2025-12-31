@@ -12,10 +12,10 @@ public class Main {
     public static void main(String[] args) {
 
         // Setup
-        MovieRepository movieRepo = new MovieRepository();
-        CinemaRepository cinemaRepo = new CinemaRepository();
-        ScreenRepository screenRepo = new ScreenRepository();
-        MovieShowRepository showRepo = new MovieShowRepository();
+        InMovieRepository movieRepo = new InMovieRepository();
+        InCinemaRepository cinemaRepo = new InCinemaRepository();
+        InScreenRepository screenRepo = new InScreenRepository();
+        InMovieShowRepository showRepo = new InMovieShowRepository();
         ShowSeatRepository seatRepo = new InMemoryShowSeatRepository();
         SeatLockRepository lockService = new InMemorySeatLockRepository();
         BookingService bookingService = new BookingService(seatRepo, lockService);

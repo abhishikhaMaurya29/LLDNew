@@ -2,9 +2,9 @@ package model;
 
 public class ChannelConfig {
     private long id;
-    private String tenantId;
-    private ChannelType channelType;
-    private String configJson;
+    public String tenantId;
+    public ChannelType channelType;
+    public String configJson;  // SMTP configs / API keys
 
     public ChannelConfig(long id, String tenantId, ChannelType channelType, String configJson) {
         this.id = id;

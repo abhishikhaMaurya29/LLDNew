@@ -5,7 +5,7 @@ import Model.MovieShow;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MovieShowRepository {
+public class InMovieShowRepository {
     private final Map<Long, MovieShow> shows = new HashMap<>();
 
     public void save(MovieShow show) {

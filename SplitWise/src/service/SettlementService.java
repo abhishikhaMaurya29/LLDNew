@@ -14,25 +14,25 @@ public class SettlementService {
     }
 
     public Long settle(SettlementRequest req) {
-        if (settlementRepo.existByReferenceId(req.getReferenceId())) {
+        if (settlementRepo.existByReferenceId(req.referenceId())) {
             // Idempotent
             return settlementRepo.save(new Settlement(
                     null,
-                    req.getFromUser(),
-                    req.getToUser(),
-                    req.getGroup(),
-                    req.getReferenceId(),
-                    req.getAmount()
+                    req.fromUser(),
+                    req.toUser(),
+                    req.group(),
+                    req.referenceId(),
+                    req.amount()
             ));
         }
 
         Settlement s = new Settlement(
                 null,
-                req.getFromUser(),
-                req.getToUser(),
-                req.getGroup(),
-                req.getReferenceId(),
-                req.getAmount()
+                req.fromUser(),
+                req.toUser(),
+                req.group(),
+                req.referenceId(),
+                req.amount()
         );
         Long id = settlementRepo.save(s);
         balanceService.applySettlement(s);

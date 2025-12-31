@@ -18,9 +18,9 @@ public class InMemorySeatLockRepository implements SeatLockRepository {
 
         long now = System.currentTimeMillis();
         for (Long seatId : seatIds) {
-            showLockInfos.compute(seatId, (id, existing) -> {
+            showLockInfos.compute(seatId, (_, existing) -> {
                 if (existing != null && !existing.isExpired(now)) {
-                    throw new RuntimeException("Seat already locked: "+ seatId);
+                    throw new RuntimeException("Seat already locked: " + seatId);
                 }
 
                 return new LockInfo(userId, now + LOCK_DURATION_MS);
