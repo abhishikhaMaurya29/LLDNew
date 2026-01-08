@@ -1,8 +1,8 @@
 package model.Order.states;
 
-import model.DeliveryPartner;
 import model.Order.OrderContext;
 import model.Order.OrderSnapshot;
+import model.Order.OrderStatus;
 import model.PaymentRequest;
 import payment.PaymentType;
 import retry.TimedStateTracker;
@@ -20,34 +20,52 @@ public class OrderSaga {
         this.timedStateTracker = timedStateTracker;
     }
 
-    void execute(OrderContext orderContext, DeliveryPartner deliveryPartner) {
+    public void execute(OrderContext orderContext) {
         try {
             OrderSnapshot s1 = orderContext.snapshot();
-            PaymentRequest paymentRequest = new PaymentRequest(orderContext.getOrderId(), "idem-key", PaymentType.CARD);
+            PaymentRequest paymentRequest = new PaymentRequest(orderContext.getOrderId(),
+                    "idem-key", PaymentType.CARD);
             paymentService.processPayment(paymentRequest);
             orderContext.pay(s1.getVersion());
 
-            timedStateTracker.track(orderContext, 2 * 60 * 1000, () -> {
+            timedStateTracker.track(orderContext, OrderStatus.PAID, 2 * 60 * 1000, () -> {
                 paymentService.refund(orderContext.getOrderId());
             });
+
+            // clear previous timeout on success
+            timedStateTracker.clear(orderContext.getOrderId());
 
             OrderSnapshot s2 = orderContext.snapshot();
             orderContext.accept(s2.getVersion());
 
-            timedStateTracker.track(orderContext, 2 * 60 * 1000, () -> {
+            timedStateTracker.track(orderContext, OrderStatus.ACCEPTED, 2 * 60 * 1000, () -> {
                 paymentService.refund(orderContext.getOrderId());
             });
+
+            timedStateTracker.clear(orderContext.getOrderId());
 
             OrderSnapshot s3 = orderContext.snapshot();
             deliveryService.assignDeliveryPartner(orderContext);
             orderContext.dispatch(s3.getVersion());
 
-            timedStateTracker.track(orderContext, 2 * 60 * 1000, () -> {
+            timedStateTracker.track(orderContext, OrderStatus.OUT_FOR_DELIVERY, 2 * 60 * 1000, () -> {
                 deliveryService.release(orderContext.getOrderId());
             });
         } catch (Exception ex) {
             paymentService.refund(orderContext.getOrderId());
             throw ex;
+        }
+    }
+
+    private void compensate(OrderContext orderContext) {
+        OrderStatus status = orderContext.status();
+
+        if (status == OrderStatus.PAID || status == OrderStatus.ACCEPTED) {
+            paymentService.refund(orderContext.getOrderId());
+        }
+
+        if (status == OrderStatus.OUT_FOR_DELIVERY) {
+            deliveryService.release(orderContext.getOrderId());
         }
     }
 }

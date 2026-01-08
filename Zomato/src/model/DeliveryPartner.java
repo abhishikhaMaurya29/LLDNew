@@ -26,8 +26,4 @@ public class DeliveryPartner {
     public boolean markBusy() {
         return isAvailable.compareAndSet(true, false);
     }
-
-    public void markAvailable() {
-        isAvailable.set(true);
-    }
 }

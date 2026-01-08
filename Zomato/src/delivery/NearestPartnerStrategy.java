@@ -7,7 +7,7 @@ import repository.impl.DeliveryPartnerRepository;
 public class NearestPartnerStrategy implements DeliveryAssignmentStrategy {
 
     @Override
-    public DeliveryPartner assign(OrderContext order, DeliveryPartnerRepository deliveryPartnerRepository) {
+    public DeliveryPartner assign(OrderContext orderContext, DeliveryPartnerRepository deliveryPartnerRepository) {
         for (DeliveryPartner deliveryPartner : deliveryPartnerRepository.findAvailablePartners()) {
             if (deliveryPartner.markBusy()) {
                 return deliveryPartner;

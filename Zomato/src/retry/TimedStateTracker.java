@@ -29,7 +29,7 @@ public class TimedStateTracker {
         }, timeoutMs, TimeUnit.MILLISECONDS);
     }
 
-    void clear(String orderId) {
+    public void clear(String orderId) {
         tracked.remove(orderId);
     }
 
